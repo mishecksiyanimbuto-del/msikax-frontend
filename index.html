@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MsikaX — Open a shop. Reach every buyer.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!--
+  STYLESHEETS — split by concern (Phase 1):
+  main.css        shared shell: reset, nav, hero, ticker, buttons, modal, toast
+  marketplace.css search/filter, product & shop cards, cart, order history
+  forms.css       inputs, auth tabs, photo upload, payment option cards
+  dashboard.css   seller-only: listing quota, commission preview, chat, wallet/ledger
+-->
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/marketplace.css">
+<link rel="stylesheet" href="css/forms.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<!-- ==================================================================== -->
+<!-- NAV — logo, section links, cart badge, account pill / auth buttons   -->
+<!-- ==================================================================== -->
+<header>
+  <nav>
+    <div class="logo" onclick="go('home')"><span class="dot"></span>Msika<span class="x">X</span></div>
+    <div class="navlinks">
+      <button class="navbtn" data-view="market" onclick="go('market')">Marketplace</button>
+      <button class="navbtn" data-view="myshop" onclick="go('myshop')">My Shop</button>
+      <button class="navbtn" data-view="chats" onclick="go('chats')">Messages</button>
+      <button class="navbtn" data-view="saved" onclick="go('saved')">Saved</button>
+      <button class="navbtn" data-view="cart" onclick="go('cart')">Cart<span id="cartCount" class="cart-badge hidden">0</span></button>
+      <button class="navbtn" data-view="orders" onclick="go('orders')">Orders</button>
+      <button class="navbtn hidden" id="adminNavBtn" data-view="admin" onclick="go('admin')">Admin</button>
+      <button class="navbtn" onclick="openSuggestionBox()">Feedback</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="notif-wrap hidden" id="notifWrap">
+        <button class="notif-bell" onclick="toggleNotifPanel()">🔔<span id="notifBadge" class="cart-badge hidden">0</span></button>
+        <div class="notif-panel hidden" id="notifPanel"></div>
+      </div>
+      <div class="nav-right" id="navRight"></div>
+    </div>
+  </nav>
+  <!-- live "just listed" ticker, pulled from the real marketplace via the backend -->
+  <div class="ticker-bar"><div class="ticker-track" id="tickerTrack"></div></div>
+</header>
+
+<main>
+
+  <!-- ==================================================================== -->
+  <!-- HOME — hero + newly listed items                                     -->
+  <!-- ==================================================================== -->
+  <section id="view-home" class="view">
+    <div class="wrap hero">
+      <div class="eyebrow">● live marketplace — Malawi</div>
+      <h1>Open a shop.<br>Sell to <span class="accent">everyone</span> nearby.</h1>
+      <p class="lead">MsikaX turns any phone into a storefront. List what you're selling, get discovered by buyers browsing the marketplace, message buyers directly, and get paid via Airtel Money, TNM Mpamba, Mo626 or PayChangu — straight into your MsikaX wallet.</p>
+      <div class="hero-ctas">
+        <button class="btn btn-gold" onclick="openAuth('signup')">Open your shop — 10 listings free</button>
+        <button class="btn btn-ghost" onclick="go('market')">Browse the marketplace</button>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><b id="statShops">–</b><span>Shops trading</span></div>
+        <div class="stat"><b id="statProducts">–</b><span>Items listed</span></div>
+        <div class="stat"><b>4</b><span>Payment options</span></div>
+      </div>
+    </div>
+
+    <div class="wrap section">
+      <div class="section-head"><h2>Newly listed</h2><p>Fresh off the shelf, across every shop on MsikaX</p></div>
+      <div class="grid" id="homeGrid"></div>
+    </div>
+
+    <div class="wrap">
+      <div class="cta-band">
+        <h2>Got something to sell?</h2>
+        <p>10 free listings in your first month, 5 in your second — then MK 5,000/month keeps you listing. MsikaX only earns when you do.</p>
+        <button class="btn btn-gold" onclick="openAuth('signup')">Create my shop</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- MARKETPLACE — search + category filter + product grid                -->
+  <!-- ==================================================================== -->
+  <section id="view-market" class="view hidden">
+    <div class="wrap section">
+      <div class="section-head"><h2>Marketplace</h2><p id="marketCount">Browsing all shops and items</p></div>
+      <div class="tabs" style="max-width:280px;margin-bottom:22px;">
+        <button class="tab-btn active" id="marketTabProducts" onclick="setMarketTab('products')">Products</button>
+        <button class="tab-btn" id="marketTabShops" onclick="setMarketTab('shops')">Shops</button>
+      </div>
+
+      <div id="productSearchPanel">
+        <div class="toolbar">
+          <input class="search-input" id="marketSearch" placeholder="Search items or shops…" oninput="debouncedMarketSearch()">
+          <div id="marketChips" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+        </div>
+        <div class="toolbar" style="margin-top:-14px;">
+          <input class="search-input" id="marketDistrict" placeholder="District (e.g. Zomba)" style="flex:0 1 160px;" oninput="debouncedMarketSearch()">
+          <input class="search-input" id="marketMinPrice" type="number" placeholder="Min price" style="flex:0 1 110px;" oninput="debouncedMarketSearch()">
+          <input class="search-input" id="marketMaxPrice" type="number" placeholder="Max price" style="flex:0 1 110px;" oninput="debouncedMarketSearch()">
+          <select class="search-input" id="marketMinRating" style="flex:0 1 140px;" onchange="renderMarket()">
+            <option value="">Any rating</option>
+            <option value="4">4★ &amp; up</option>
+            <option value="4.5">4.5★ &amp; up</option>
+          </select>
+          <select class="search-input" id="marketSort" style="flex:0 1 140px;" onchange="renderMarket()">
+            <option value="newest">Newest</option>
+            <option value="price_asc">Price: low to high</option>
+            <option value="price_desc">Price: high to low</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);white-space:nowrap;">
+            <input type="checkbox" id="marketVerifiedOnly" onchange="renderMarket()"> Verified shops only
+          </label>
+        </div>
+        <div class="grid" id="marketGrid"></div>
+      </div>
+
+      <div id="shopBrowsePanel" class="hidden">
+        <div class="toolbar">
+          <div id="shopBrowseChips" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);white-space:nowrap;margin-left:auto;">
+            <input type="checkbox" id="shopBrowseVerifiedOnly" onchange="renderShopBrowse()"> Verified shops only
+          </label>
+        </div>
+        <div class="grid" id="shopBrowseGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- SHOP DETAIL — a single seller's public storefront                    -->
+  <!-- ==================================================================== -->
+  <section id="view-shop" class="view hidden">
+    <div class="wrap section">
+      <button class="btn btn-ghost btn-sm" onclick="go('market')">← back to marketplace</button>
+      <div class="shop-banner" style="margin-top:20px;" id="shopBanner"></div>
+      <div class="grid" id="shopProducts"></div>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- MY SHOP — open a shop, manage listings, quota/subscription status    -->
+  <!-- ==================================================================== -->
+  <section id="view-myshop" class="view hidden">
+    <div class="wrap section" id="myshopContent"></div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- WALLET — balance (server-computed) + ledger + withdraw (Phase 8/9)   -->
+  <!-- ==================================================================== -->
+  <section id="view-wallet" class="view hidden">
+    <div class="wrap section" id="walletContent"></div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- SHOP REFUNDS — seller sees requests against their shop, can respond  -->
+  <!-- ==================================================================== -->
+  <section id="view-shoprefunds" class="view hidden">
+    <div class="wrap section">
+      <div class="section-head"><h2>Refund requests</h2><p>Buyers requesting a refund from your shop — a MsikaX admin makes the final call</p></div>
+      <div id="shopRefundsContent"></div>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- SHOP REVIEWS — seller replies to reviews on their own products       -->
+  <!-- ==================================================================== -->
+  <section id="view-shopreviews" class="view hidden">
+    <div class="wrap section">
+      <div class="section-head"><h2>Reviews</h2><p>What buyers are saying — reply to add context</p></div>
+      <div id="shopReviewsContent"></div>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- MESSAGES — buyer/seller chat (Phase 11.5)                            -->
+  <!-- ==================================================================== -->
+  <section id="view-chats" class="view hidden">
+    <div class="wrap section">
+      <div class="section-head"><h2>Messages</h2><p>Conversations with sellers, and with buyers if you run a shop</p></div>
+      <div id="chatsContent"></div>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- SAVED — wishlisted products + followed shops                         -->
+  <!-- ==================================================================== -->
+  <section id="view-saved" class="view hidden">
+    <div class="wrap section">
+      <div class="section-head"><h2>Saved</h2><p>Products you've wishlisted and shops you follow</p></div>
+      <div class="tabs" style="max-width:280px;margin-bottom:22px;">
+        <button class="tab-btn active" id="savedTabWishlist" onclick="setSavedTab('wishlist')">Wishlist</button>
+        <button class="tab-btn" id="savedTabFollowing" onclick="setSavedTab('following')">Following</button>
+      </div>
+      <div id="savedContent"></div>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- CART — server-side cart, review before checkout                      -->
+  <!-- ==================================================================== -->
+  <section id="view-cart" class="view hidden">
+    <div class="wrap section">
+      <div class="section-head"><h2>Your cart</h2><p>Review before you check out</p></div>
+      <div id="cartContent"></div>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- ORDERS — buyer purchase history                                       -->
+  <!-- ==================================================================== -->
+  <section id="view-orders" class="view hidden">
+    <div class="wrap section">
+      <div class="section-head"><h2>Order history</h2><p>Everything you've bought on MsikaX</p></div>
+      <div id="ordersContent"></div>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- ADMIN — platform stats + moderation (admin accounts only)             -->
+  <!-- ==================================================================== -->
+  <section id="view-admin" class="view hidden">
+    <div class="wrap section">
+      <div class="section-head"><h2>Admin</h2><p>Users, shops, listings, orders, transactions, withdrawals, and suggestions</p></div>
+      <div id="adminContent"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <div class="logo" style="font-size:16px;"><span class="dot"></span>Msika<span class="x">X</span></div>
+    <p class="foot-note">Backed by a real server: accounts, shops, listings, messages and orders are stored centrally. Payments run through PayChangu (Airtel Money, TNM Mpamba, Mo626, and PayChangu's own checkout), and every seller's share lands in their MsikaX wallet to withdraw whenever they choose.
+      <button class="foot-link" onclick="openSuggestionBox()">Got an idea to improve MsikaX? Tell us →</button>
+    </p>
+  </div>
+</footer>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<!-- ============================================================ -->
+<!-- SCRIPTS — order matters: api.js and app.js define the shared  -->
+<!-- state/router/modal helpers every other module calls; the      -->
+<!-- feature modules (auth/marketplace/cart/checkout/seller/        -->
+<!-- wallet/chat) must all be loaded before initApp() runs at the    -->
+<!-- very end, since go('home') on startup can call into any of them.-->
+<!-- ============================================================ -->
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/marketplace.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/checkout.js"></script>
+<script src="js/seller.js"></script>
+<script src="js/wallet.js"></script>
+<script src="js/refunds.js"></script>
+<script src="js/reviews.js"></script>
+<script src="js/saved.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/admin.js"></script>
+<script>
+  // The suggestion box lives inline here rather than its own module —
+  // it's a single modal + one POST, used from the nav and footer only.
+  function openSuggestionBox(){
+    showModal(`
+      <div class="modal-head"><h2>Suggest an improvement</h2><button class="x-close" onclick="closeModal()">✕</button></div>
+      <p class="modal-sub">Tell us what's missing, confusing, or could just be better.</p>
+      <label>Your name (optional)</label>
+      <input type="text" id="sugName" placeholder="${state.user?state.user.name:'Anonymous'}">
+      <label>Your suggestion</label>
+      <textarea id="sugMessage" placeholder="e.g. It would help if I could message a seller before buying…"></textarea>
+      <div class="err-text" id="sugErr"></div>
+      <button class="btn btn-gold btn-block" style="margin-top:16px;" onclick="submitSuggestion()">Send suggestion</button>
+    `);
+  }
+  async function submitSuggestion(){
+    const name = document.getElementById('sugName').value.trim();
+    const message = document.getElementById('sugMessage').value.trim();
+    const err = document.getElementById('sugErr');
+    if(!message){ err.textContent = 'Write a suggestion before sending.'; err.style.display = 'block'; return; }
+    try{ await api.post('/api/suggestions', { name, message }); closeModal(); toast("Thanks — we've logged your suggestion"); }
+    catch(e){ err.textContent = e.message; err.style.display = 'block'; }
+  }
+
+  initApp();
+</script>
+</body>
+</html>

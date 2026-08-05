@@ -1,0 +1,55 @@
+/* ============================================================================
+   MARKETPLACE.CSS — search/filter toolbar, product & shop cards, shop
+   banner, cart layout, order history cards.
+   ============================================================================ */
+.toolbar{display:flex;gap:10px;margin-bottom:26px;flex-wrap:wrap;align-items:center;}
+.search-input{flex:1;min-width:220px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:11px 15px;border-radius:9px;font-size:14px;}
+.search-input:focus{border-color:var(--gold);}
+.chip{background:var(--card);border:1px solid var(--border);color:var(--text-dim);padding:9px 15px;border-radius:100px;font-size:13px;font-weight:500;white-space:nowrap;}
+.chip.active{background:var(--gold);color:#1A1300;border-color:var(--gold);font-weight:700;}
+.chip:hover:not(.active){border-color:var(--border-strong);color:var(--text);}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:.18s;cursor:pointer;display:flex;flex-direction:column;}
+.card:hover{background:var(--card-hover);border-color:var(--border-strong);transform:translateY(-2px);}
+.card .thumb{width:100%;aspect-ratio:1.5/1;border-radius:9px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden;}
+.card .thumb img{width:100%;height:100%;object-fit:cover;}
+.card h3{margin:0 0 4px;font-size:16px;font-weight:600;letter-spacing:-0.01em;}
+.card .meta{color:var(--text-faint);font-size:12.5px;margin-bottom:10px;}
+.card .price{font-family:'JetBrains Mono';color:var(--gold);font-weight:600;font-size:15px;margin-top:auto;}
+.shop-card .thumb{background:linear-gradient(135deg,rgba(46,196,182,0.18),rgba(242,169,59,0.14));}
+.prod-card .thumb{background:var(--bg-elev);}
+.stock-tag{font-size:11px;color:var(--text-faint);margin-top:2px;}
+.badge-cat{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);font-weight:800;margin-bottom:6px;}
+
+.shop-banner{display:flex;align-items:center;gap:20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:30px;flex-wrap:wrap;}
+.shop-banner .emoji-big{width:74px;height:74px;border-radius:16px;background:linear-gradient(135deg,rgba(46,196,182,0.2),rgba(242,169,59,0.18));display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0;overflow:hidden;}
+.shop-banner .emoji-big img{width:100%;height:100%;object-fit:cover;}
+.shop-banner h2{margin:0 0 4px;font-size:23px;} .shop-banner p{margin:0;color:var(--text-dim);font-size:14px;}
+
+.cart-line{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.cart-line .thumb-sm{width:52px;height:52px;border-radius:8px;background:var(--bg-elev);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden;}
+.cart-line .thumb-sm img{width:100%;height:100%;object-fit:cover;}
+.cart-line .info{flex:1;} .cart-line .info b{font-size:14.5px;} .cart-line .info .shopname{font-size:12px;color:var(--text-faint);}
+.qty-ctrl{display:flex;align-items:center;gap:8px;background:var(--bg-elev);border:1px solid var(--border);border-radius:8px;padding:4px 6px;}
+.qty-ctrl button{background:none;border:none;color:var(--text);width:20px;height:20px;font-size:14px;}
+.qty-ctrl span{font-family:'JetBrains Mono';font-size:13px;min-width:16px;text-align:center;}
+.cart-summary{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;position:sticky;top:90px;}
+.summary-row{display:flex;justify-content:space-between;font-size:14px;color:var(--text-dim);margin-bottom:10px;}
+.summary-row.total{color:var(--text);font-weight:700;font-size:17px;border-top:1px solid var(--border);padding-top:14px;margin-top:14px;}
+.summary-row.total .mono{color:var(--gold);}
+.cart-layout{display:grid;grid-template-columns:1fr 320px;gap:26px;align-items:start;}
+@media(max-width:760px){.cart-layout{grid-template-columns:1fr;} .cart-summary{position:static;}}
+
+.order-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:12px;}
+.order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.order-ref{font-family:'JetBrains Mono';font-size:13px;color:var(--text-dim);}
+.status-pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:.03em;}
+.status-pill.paid{background:rgba(46,196,182,0.15);color:var(--teal);}
+.status-pill.pending,.status-pill.awaiting_payment{background:rgba(242,169,59,0.15);color:var(--gold);}
+.status-pill.failed{background:rgba(255,107,94,0.15);color:var(--coral);}
+.order-items{font-size:13.5px;color:var(--text-dim);margin-bottom:8px;}
+.order-foot{display:flex;justify-content:space-between;font-size:13px;color:var(--text-faint);}
+
+/* Seller verification (Phase 13) */
+.verified-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:var(--teal);background:rgba(46,196,182,0.14);border:1px solid rgba(46,196,182,0.3);padding:2px 8px;border-radius:100px;vertical-align:middle;}

@@ -1,0 +1,38 @@
+/* ============================================================================
+   FORMS.CSS — inputs, labels, auth tabs, payment option cards, error text.
+   ============================================================================ */
+.form-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;max-width:480px;}
+.form-panel.wide{max-width:640px;}
+label{display:block;font-size:13px;font-weight:600;color:var(--text-dim);margin:16px 0 6px;}
+label:first-of-type{margin-top:0;}
+input[type=text],input[type=email],input[type=password],input[type=tel],input[type=number],textarea,select{
+  width:100%;background:var(--bg-elev);border:1px solid var(--border);color:var(--text);padding:11px 13px;border-radius:8px;font-size:14px;font-family:inherit;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);}
+textarea{resize:vertical;min-height:70px;}
+.form-row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.err-text{color:var(--coral);font-size:13px;margin-top:10px;display:none;}
+.field-note{font-size:12px;color:var(--text-faint);margin-top:5px;}
+
+.emoji-picker{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.emoji-opt{width:38px;height:38px;border-radius:8px;background:var(--bg-elev);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.emoji-opt.sel{border-color:var(--gold);background:rgba(242,169,59,0.12);}
+
+.photo-upload{display:flex;align-items:center;gap:14px;margin-top:6px;}
+.photo-preview{width:64px;height:64px;border-radius:10px;background:var(--bg-elev);border:1px dashed var(--border-strong);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:22px;flex-shrink:0;}
+.photo-preview img{width:100%;height:100%;object-fit:cover;}
+.file-btn{background:var(--bg-elev);border:1px solid var(--border-strong);padding:9px 14px;border-radius:8px;font-size:13px;font-weight:600;display:inline-block;}
+
+.pay-options{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
+.pay-opt{display:flex;align-items:center;gap:13px;border:1px solid var(--border);background:var(--bg-elev);padding:13px 15px;border-radius:10px;transition:.15s;}
+.pay-opt.sel{border-color:var(--gold);background:rgba(242,169,59,0.08);}
+.pay-opt .pmark{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0;}
+.pay-opt .ptext b{display:block;font-size:14px;} .pay-opt .ptext span{display:block;font-size:12px;color:var(--text-faint);}
+.pay-opt input{width:16px;height:16px;margin-left:auto;accent-color:var(--gold);}
+.mark-airtel{background:#E30613;} .mark-mpamba{background:#FFCC00;color:#1a1a1a !important;} .mark-mo626{background:#2EC4B6;color:#062824 !important;}
+.mark-paychangu{background:linear-gradient(135deg,#151822,#1B1F2B);border:1px solid var(--gold);color:var(--gold) !important;}
+
+.pay-processing{text-align:center;padding:30px 10px;}
+.spinner{width:44px;height:44px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--gold);animation:spin .8s linear infinite;margin:0 auto 20px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.pay-success .check{width:56px;height:56px;border-radius:50%;background:rgba(46,196,182,0.15);color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 18px;}
