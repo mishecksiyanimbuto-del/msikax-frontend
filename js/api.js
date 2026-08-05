@@ -5,7 +5,7 @@
 // ============================================================================
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:4000'
-  : 'https://msikax-backend.onrender.com'; // Live backend URL on Render
+  : 'https://msikax-backend.onrender.com';
 
 const TOKEN_KEY = 'msikax_token';
 
