@@ -4,10 +4,13 @@
 // from here rather than keeping its own copies.
 // ============================================================================
 
-// Global API configuration pointing to your live Railway backend
-const api = window.api || {
-  base: "https://msikax-backend-production.up.railway.app"
-};
+// Global API configuration fallback (uses api defined in api.js)
+if (!window.api) {
+  window.api = {
+    base: "https://msikax-backend-production.up.railway.app"
+  };
+}
+var api = window.api;
 
 const CATS = ['All','Fashion','Electronics','Food & Produce','Home & Living','Crafts','Beauty','Other'];
 const EMOJIS = ['🛍️','👗','📱','🍅','🪑','🧺','💄','🥾','🧵','🐐','🍞','🧴','🎨','🚲','🧢'];
