@@ -42,8 +42,22 @@
         <div class="notif-panel hidden" id="notifPanel"></div>
       </div>
       <div class="nav-right" id="navRight"></div>
+      <!-- Only visible below the mobile breakpoint (see main.css) — .navlinks above
+           is hidden there instead, so without this there'd be NO way to reach
+           My Shop/Cart/Orders/etc. on an actual phone in portrait mode. -->
+      <button class="hamburger-btn" onclick="toggleMobileNav()" aria-label="Menu">☰</button>
     </div>
   </nav>
+  <div class="mobile-nav-drawer hidden" id="mobileNavDrawer" onclick="closeMobileNav()">
+    <button class="navbtn" data-view="market" onclick="go('market')">Marketplace</button>
+    <button class="navbtn" data-view="myshop" onclick="go('myshop')">My Shop</button>
+    <button class="navbtn" data-view="chats" onclick="go('chats')">Messages</button>
+    <button class="navbtn" data-view="saved" onclick="go('saved')">Saved</button>
+    <button class="navbtn" data-view="cart" onclick="go('cart')">Cart<span id="cartCountMobile" class="cart-badge hidden">0</span></button>
+    <button class="navbtn" data-view="orders" onclick="go('orders')">Orders</button>
+    <button class="navbtn hidden" id="adminNavBtnMobile" data-view="admin" onclick="go('admin')">Admin</button>
+    <button class="navbtn" onclick="openSuggestionBox()">Feedback</button>
+  </div>
   <!-- live "just listed" ticker, pulled from the real marketplace via the backend -->
   <div class="ticker-bar"><div class="ticker-track" id="tickerTrack"></div></div>
 </header>

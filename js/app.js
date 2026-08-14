@@ -27,7 +27,11 @@ function escapeHTML(s){
   d.textContent = s ?? '';
   return d.innerHTML;
 }
-function imgUrl(path){ return path ? api.base + path : null; }
+// Cloudinary gives back a full absolute URL already; local-disk fallback
+// only gives a relative path like /uploads/products/x.jpg that needs the
+// backend's own origin prepended. Handle both without needing to know
+// which backend is in use.
+function imgUrl(path){ return path ? (/^https?:\/\//.test(path) ? path : api.base + path) : null; }
 function thumbHTML(item){
   const raw = (item.images && item.images.length) ? item.images[0] : (item.logo || null);
   const src = imgUrl(raw);
@@ -59,6 +63,7 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
 
 /* ============ ROUTER ============ */
 async function go(view, opts={}){
+  closeMobileNav();
   if((view==='myshop'||view==='cart'||view==='orders'||view==='chats'||view==='wallet'||view==='admin'||view==='shoprefunds'||view==='shopreviews'||view==='saved') && !state.user){
     openAuth('login'); toast('Log in to continue'); return;
   }
@@ -102,12 +107,25 @@ function renderNavRight(){
       <button class="btn btn-ghost btn-sm" onclick="logout()">Log out</button>`;
   }
   document.getElementById('adminNavBtn').classList.toggle('hidden', u?.role !== 'admin');
+  document.getElementById('adminNavBtnMobile').classList.toggle('hidden', u?.role !== 'admin');
   document.getElementById('notifWrap').classList.toggle('hidden', !u);
   if(u) refreshNotifBadge(); else stopNotifPolling();
-  const cc = document.getElementById('cartCount');
   const n = cartCount();
-  cc.textContent = n;
-  cc.classList.toggle('hidden', n===0);
+  for(const id of ['cartCount','cartCountMobile']){
+    const cc = document.getElementById(id);
+    cc.textContent = n;
+    cc.classList.toggle('hidden', n===0);
+  }
+}
+
+/* ============ MOBILE NAV DRAWER ============ */
+// .navlinks (desktop inline nav) is hidden below 760px — this drawer is
+// the ONLY way to reach My Shop/Cart/Orders/etc. on an actual phone.
+function toggleMobileNav(){
+  document.getElementById('mobileNavDrawer').classList.toggle('hidden');
+}
+function closeMobileNav(){
+  document.getElementById('mobileNavDrawer').classList.add('hidden');
 }
 
 /* ============ INIT ============ */

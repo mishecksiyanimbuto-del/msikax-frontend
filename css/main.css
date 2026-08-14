@@ -30,6 +30,12 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:16px 2
 .navlinks button.navbtn{background:none;border:none;color:var(--text-dim);font-weight:500;font-size:14.5px;padding:9px 14px;border-radius:9px;transition:.15s;position:relative;}
 .navlinks button.navbtn:hover{color:var(--text);background:var(--bg-elev);}
 .navlinks button.navbtn.active{color:var(--text);background:var(--card);}
+
+/* Mobile hamburger + drawer — hidden on desktop; on mobile this REPLACES
+   .navlinks (which gets display:none below), so nav is never inaccessible. */
+.hamburger-btn{display:none;background:none;border:1px solid var(--border-strong);color:var(--text);font-size:18px;width:38px;height:38px;border-radius:9px;align-items:center;justify-content:center;cursor:pointer;}
+.hamburger-btn:hover{background:var(--bg-elev);}
+.mobile-nav-drawer{display:none;}
 .cart-badge,.chat-badge{display:inline-flex;align-items:center;justify-content:center;background:var(--gold);color:#1A1300;font-size:10.5px;font-weight:700;min-width:16px;height:16px;border-radius:20px;padding:0 4px;margin-left:6px;font-family:'JetBrains Mono';}
 
 /* Notifications (polled, not pushed — see notificationService.js for why) */
@@ -124,4 +130,17 @@ footer{border-top:1px solid var(--border);padding:34px 0;margin-top:40px;}
 
 @media(max-width:760px){
   .hero h1{font-size:38px;} .navlinks{display:none;} nav{padding:14px 18px;} .hero{padding:44px 0 40px;}
+  .hamburger-btn{display:flex;}
+  .mobile-nav-drawer.hidden{display:none;}
+  .mobile-nav-drawer:not(.hidden){
+    display:flex;flex-direction:column;gap:2px;
+    background:var(--bg-elev);border-bottom:1px solid var(--border);
+    padding:10px 18px 16px;
+  }
+  .mobile-nav-drawer .navbtn{
+    width:100%;text-align:left;background:none;border:none;color:var(--text-dim);
+    font-weight:500;font-size:15px;padding:13px 10px;border-radius:9px;
+  }
+  .mobile-nav-drawer .navbtn:active{background:var(--card);}
+  .mobile-nav-drawer .navbtn.active{color:var(--text);background:var(--card);}
 }
