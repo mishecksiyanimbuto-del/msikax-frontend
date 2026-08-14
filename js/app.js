@@ -4,13 +4,12 @@
 // from here rather than keeping its own copies.
 // ============================================================================
 
-// Global API configuration fallback (uses api defined in api.js)
+// Global API configuration fallback (safely uses api defined in api.js)
 if (!window.api) {
   window.api = {
     base: "https://msikax-backend-production.up.railway.app"
   };
 }
-var api = window.api;
 
 const CATS = ['All','Fashion','Electronics','Food & Produce','Home & Living','Crafts','Beauty','Other'];
 const EMOJIS = ['🛍️','👗','📱','🍅','🪑','🧺','💄','🥾','🧵','🐐','🍞','🧴','🎨','🚲','🧢'];
@@ -41,7 +40,7 @@ function escapeHTML(s){
 // only gives a relative path like /uploads/products/x.jpg that needs the
 // backend's own origin prepended. Handle both without needing to know
 // which backend is in use.
-function imgUrl(path){ return path ? (/^https?:\/\//.test(path) ? path : api.base + path) : null; }
+function imgUrl(path){ return path ? (/^https?:\/\//.test(path) ? path : (window.api ? window.api.base : '') + path) : null; }
 function thumbHTML(item){
   const raw = (item.images && item.images.length) ? item.images[0] : (item.logo || null);
   const src = imgUrl(raw);
@@ -61,7 +60,8 @@ function toast(msg){
 window.addEventListener('msikax:backend-unreachable', () => {
   const modalRoot = document.getElementById('modalRoot');
   if(modalRoot) modalRoot.innerHTML = '';
-  toast("Can't reach the MsikaX backend — is the server running at " + api.base + "?");
+  const apiBase = window.api ? window.api.base : '';
+  toast("Can't reach the MsikaX backend — is the server running at " + apiBase + "?");
 });
 
 /* ============ MODAL SHELL ============ */
